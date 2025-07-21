@@ -1,5 +1,4 @@
-export const WELCOME = Привет, солнечная! ☀️ Я <b>Мария</b> из <i>Speak & Shine</i>.\n\nВот твой мини‑пак <b>Survival Pack 🗣️</b>.\nВыбери, какая ситуация жмёт сильнее всего — пришлю <b>7 нужных фраз + аудио</b> прямо здесь.;
-
+export const WELCOME = 'Привет, солнечная! ☀️ Я <b>Мария</b> из <i>Speak & Shine</i>.\n\nВот твой мини‑пак <b>Survival Pack 🗣️</b>.\nВыбери, какая ситуация жмёт сильнее всего — пришлю <b>7 нужных фраз + аудио</b> прямо здесь.';
 export const SURVIVAL_MENU = [
   [{ text: '🩺 Доктор', data: 'doc' }, { text: '🏪 Магазин', data: 'shop' }],
   [{ text: '🏫 Школа', data: 'school' }, { text: '🏦 Банк', data: 'bank' }],
