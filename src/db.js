@@ -1,10 +1,9 @@
-import { LowSync } from 'lowdb';
-import { JSONFileSync } from 'lowdb/node';
+import { LowSync }          from 'lowdb';
+import { JSONFileSync }     from 'lowdb/node';
 
 const adapter = new JSONFileSync('./db.json');
-export const db = new LowSync(adapter);
-db.read();
-db.data ||= { users: {} };
+export const db = new LowSync(adapter, { users: {} });
+db.read();        
 
 /** helpers */
 export const getState = uid => db.data.users[uid] || {};
