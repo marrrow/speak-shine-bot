@@ -60,11 +60,10 @@ if (process.env.WEBHOOK_DOMAIN) {
   bot.launch().then(() => console.log('🚀 Bot running (getUpdates)'));
 }
 bot.on('voice', async ctx => {
-  const fileId = ctx.message.voice.file_id;
-  console.log('📥 Получен voice от', ctx.from.username || ctx.from.id);
-  console.log('🎧 file_id:', fileId);
+  const id = ctx.message.voice.file_id;
+  console.log('🎧 file_id:', id);
 
-  await ctx.reply(`✓ Получил voice\nfile_id:\n<code>${fileId}</code>`, {
+  await ctx.reply(`✓ Готово. Вот file_id:\n<code>${id}</code>`, {
     parse_mode: 'HTML'
   });
 });
