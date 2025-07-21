@@ -32,37 +32,10 @@ export const PHRASES = {
 → Кстати, я Мария. А как вас зовут?
 
 Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
-    voice: 'AwACAgQAAxkDAAMCaH5YNUEAAdZyJBkdZzEyLLFxl7acAALnGQACcGrwUzIfmnXtlgIBNgQ'
-  },
-  bank: {
-    caption: `🏦 Фразы для звонков, переводов, ошибок и писем
-
-1. I have a question about my account.
-→ У меня вопрос по счёту.
-
-2. I saw a strange charge here.
-→ Здесь странное списание.
-
-3. Can you explain this letter to me?
-→ Объясните, пожалуйста, это письмо.
-
-4. I want to send money to another account.
-→ Хочу перевести деньги на другой счёт.
-
-5. What documents do I need to bring?
-→ Какие документы нужно принести?
-
-6. I need to order a new card. I lost mine.
-→ Мне нужно заказать новую карту. Я потеряла свою.
-
-7. Can I open a joint account with my husband?
-→ Можно открыть совместный счёт с мужем?
-
-Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
-    voice: 'AwACAgQAAxkDAAMDaH5Yi5Xi8NAqOS5yb3JySHjdkLUAAukZAAJwavBT9EW7O1DPUhk2BA'
+    voice: 'AwACAgEAAxkBAAE4KwJofmHQRJy80bDQyLE_LQbDILZ4ZwAC3AUAAvUvuEfy6qztkRWbxjYE'
   },
   doc: {
-    caption: `🩺 Фразы для визита к врачу, страховки, жалоб и объяснений
+    caption: `🩺 Фразы для визита к врачу
 
 1. I have an appointment at 10.
 → У меня запись на 10.
@@ -86,10 +59,10 @@ export const PHRASES = {
 → Нужна справка для школы/работы?
 
 Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
-    voice: 'AwACAgQAAxkDAAMEaH5YuC-PIRN6lcR08wQ9yl7n5MwAAuoZAAJwavBTvwABe3p5ZVVENgQ'
+    voice: 'AwACAgEAAxkBAAE4KxBofmJNYSwqQrtxiLHno8bnsqW5-AACdwUAAgjZ2EfB2tClDvXP0TYE'
   },
   shop: {
-    caption: `🛍 Фразы для магазинов, примерки, возврата, вопросов
+    caption: `🛍 Фразы для магазинов
 
 1. Excuse me, can you please help me find eggs?
 → Извините, вы можете помочь мне найти яйца?
@@ -113,10 +86,10 @@ export const PHRASES = {
 → На это есть скидка?
 
 Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
-    voice: 'AwACAgQAAxkDAAMFaH5Y4K91Pt83LOFGRyNXS8FneUgAAusZAAJwavBTxsCdfCVA2gE2BA'
+    voice: 'AwACAgEAAxkBAAE4KxZofmJuElm8QYB4M_0AAe88zpQkMrUAAnoFAAII2dhHBcPzCN8si0Y2BA'
   },
   school: {
-    caption: `🎒 Фразы для учительницы, домашки, поддержки ребёнка
+    caption: `🎒 Фразы для школы
 
 1. Hi, I’m Anna’s mom.
 → Здравствуйте, я мама Анны.
@@ -131,7 +104,7 @@ export const PHRASES = {
 → Мы можем как-то помочь ей дома?
 
 5. I think she needs extra help with reading.
-→ Думаю, ей нужна дополнительная помощь по чтению.
+→ Думаю, ей нужна помощь по чтению.
 
 6. Can we talk again next week?
 → Можем поговорить ещё раз на следующей неделе?
@@ -140,7 +113,34 @@ export const PHRASES = {
 → Спасибо за ваше время и заботу.
 
 Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
-    voice: 'AwACAgQAAxkDAAMGaH5ZDNBFwzlIOz-2ujLGJL8xxksAAu0ZAAJwavBTY2VIsXkGnCA2BA'
+    voice: 'AwACAgEAAxkBAAE4KxhofmKAxCEncIku0v2hfVzEfNUPqAACfgUAAgjZ2EdlFmqqr5reMTYE'
+  },
+  bank: {
+    caption: `🏦 Фразы для банка
+
+1. I have a question about my account.
+→ У меня вопрос по счёту.
+
+2. I saw a strange charge here.
+→ Здесь странное списание.
+
+3. Can you explain this letter to me?
+→ Объясните, пожалуйста, это письмо.
+
+4. I want to send money to another account.
+→ Хочу перевести деньги на другой счёт.
+
+5. What documents do I need to bring?
+→ Какие документы нужно принести?
+
+6. I need to order a new card. I lost mine.
+→ Мне нужно заказать новую карту. Я потеряла свою.
+
+7. Can I open a joint account with my husband?
+→ Можно открыть совместный счёт с мужем?
+
+Произношение. Пауза после каждой фразы — повторяй за мной 👇👇👇`,
+    voice: 'AwACAgEAAxkBAAE4KxpofmKZq75PUZwpe9ZBGbSiKd4YUgACfwUAAgjZ2Eeyw_9Ib1DVmTYE'
   }
 };
 
