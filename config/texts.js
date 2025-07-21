@@ -154,8 +154,6 @@ export const SURVIVAL_MENU = [
 
 3. Can you explain this letter to me?
 → Объясните, пожалуйста, это письмо.
-
-
 (письма от банка часто пугают — а вдруг там штраф)
 
 4. I want to send money to another account.
