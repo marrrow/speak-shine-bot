@@ -1,48 +1,44 @@
 import { Telegraf, Markup } from 'telegraf';
 import fs from 'fs';
 import path from 'path';
-import { PHRASES } from '../config/texts.js';
+import { PHRASES, WELCOME, SURVIVAL_MENU, AFTER_FILE } from '../config/texts.js';
 import { setState } from './db.js';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+// соответствие кнопок и .ogg файлов
 const VOICE_PATHS = {
-  small: 'voices/7фраз.ogg',
-  doc: 'voices/Доктор.ogg',
-  shop: 'voices/Магазин.ogg',
-  school: 'voices/Школа.ogg',
-  bank: 'voices/Банк.ogg'
+  doc: 'Доктор.ogg',
+  shop: 'Магазин.ogg',
+  school: 'Школа.ogg',
+  bank: 'Банк.ogg',
+  small: '7фраз.ogg'
 };
 
 // /start survival
 bot.start(async ctx => {
   if (ctx.startPayload !== 'survival') return;
-  await ctx.reply(
-    'Привет, солнечная! ☀️ Я Мария из Speak & Shine.\n\nВот твой мини‑пак Survival Pack 🗣️.\nВыбери, какая ситуация жмёт сильнее всего — пришлю 7 нужных фраз + аудио прямо здесь.',
-    Markup.inlineKeyboard([
-      [{ text: '🩺 Доктор', callback_data: 'doc' }, { text: '🏪 Магазин', callback_data: 'shop' }],
-      [{ text: '🏫 Школа', callback_data: 'school' }, { text: '🏦 Банк', callback_data: 'bank' }],
-      [{ text: '☕ Small Talk', callback_data: 'small' }]
-    ])
-  );
+  await ctx.replyWithHTML(WELCOME, Markup.inlineKeyboard(SURVIVAL_MENU));
 });
 
-// Обработка кнопок
-bot.action(/^(small|doc|shop|school|bank)$/, async ctx => {
+// При нажатии на кнопку "Доктор" / "Магазин" и т.д.
+bot.action(/^(doc|shop|school|bank|small)$/, async ctx => {
   const key = ctx.match[1];
   const phrase = PHRASES[key];
   const voicePath = path.resolve(`voices/${VOICE_PATHS[key]}`);
 
   try {
+    // Отправка голосового из локального файла
     await ctx.replyWithVoice({ source: fs.createReadStream(voicePath) }, {
       caption: phrase.caption
     });
   } catch (err) {
-    console.error(`❌ Ошибка при отправке voice (${key}):`, err.message);
+    console.error(`❌ Ошибка отправки voice (${key}):`, err.message);
     await ctx.reply('⚠️ Не удалось отправить голос. Попробуй позже.');
   }
 
-  await ctx.reply('Готово! Теперь запиши 3 своих фразы 👇', Markup.inlineKeyboard([
+  // После voice — предлагаем записать свои 3 фразы
+  await ctx.reply(AFTER_FILE, Markup.inlineKeyboard([
     [{ text: '📝 Записать 3 фразы', callback_data: 'rec_voice' }]
   ]));
 
@@ -50,14 +46,21 @@ bot.action(/^(small|doc|shop|school|bank)$/, async ctx => {
   setState(ctx.from.id, { tag: 'await_voice', tagTS: Date.now() });
 });
 
-// Обработка голосовых от пользователя
+// Пользователь нажал "Записать 3 фразы"
+bot.action('rec_voice', async ctx => {
+  await ctx.reply('Жду твоё голосовое сообщение на 10–15 сек 🎙');
+  await ctx.answerCbQuery();
+  setState(ctx.from.id, { tag: 'await_voice', tagTS: Date.now() });
+});
+
+// Пользователь отправил voice
 bot.on('voice', async ctx => {
   await ctx.forwardMessage(process.env.ADMIN_CHAT_ID, ctx.from.id, ctx.message.message_id);
   await ctx.reply('Супер, запись получила! 🎉 Фидбэк пришлю чуть позже.');
   setState(ctx.from.id, { tag: 'voice_pending' });
 });
 
-// Запуск
+// Запуск бота
 bot.launch().then(() => {
   console.log('🚀 Bot running via WebHook');
 });
