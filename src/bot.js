@@ -1,71 +1,66 @@
-import 'dotenv/config';
 import { Telegraf, Markup } from 'telegraf';
-import { db, getState, setState } from './db.js';
-import * as T from '../config/texts.js';
+import fs from 'fs';
+import path from 'path';
+import { PHRASES } from '../config/texts.js';
+import { setState } from './db.js';
 
-export const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-/* helper для быстрого меню */
-const buildKeyboard = rows =>
-  Markup.inlineKeyboard(rows.map(r => r.map(b => Markup.button.callback(b.text, b.data))));
+const VOICE_PATHS = {
+  small: 'voices/7фраз.ogg',
+  doc: 'voices/Доктор.ogg',
+  shop: 'voices/Магазин.ogg',
+  school: 'voices/Школа.ogg',
+  bank: 'voices/Банк.ogg'
+};
 
+// /start survival
 bot.start(async ctx => {
-  await ctx.replyWithHTML(T.WELCOME, buildKeyboard(T.SURVIVAL_MENU));
-  setState(ctx.from.id, { step: 'menu' });
+  if (ctx.startPayload !== 'survival') return;
+  await ctx.reply(
+    'Привет, солнечная! ☀️ Я Мария из Speak & Shine.\n\nВот твой мини‑пак Survival Pack 🗣️.\nВыбери, какая ситуация жмёт сильнее всего — пришлю 7 нужных фраз + аудио прямо здесь.',
+    Markup.inlineKeyboard([
+      [{ text: '🩺 Доктор', callback_data: 'doc' }, { text: '🏪 Магазин', callback_data: 'shop' }],
+      [{ text: '🏫 Школа', callback_data: 'school' }, { text: '🏦 Банк', callback_data: 'bank' }],
+      [{ text: '☕ Small Talk', callback_data: 'small' }]
+    ])
+  );
 });
 
-/* выбор ситуации */
-bot.action(/^(doc|shop|school|bank|small)$/, async ctx => {
+// Обработка кнопок
+bot.action(/^(small|doc|shop|school|bank)$/, async ctx => {
   const key = ctx.match[1];
-  const ph = T.PHRASES[key];
-  await ctx.replyWithVoice(ph.voice, { caption: ph.caption });
-  await ctx.reply(T.AFTER_FILE, buildKeyboard([[{ text: '📝 Записать 3 фразы', data: 'rec_voice' }]]));
+  const phrase = PHRASES[key];
+  const voicePath = path.resolve(`voices/${VOICE_PATHS[key]}`);
+
+  try {
+    await ctx.replyWithVoice({ source: fs.createReadStream(voicePath) }, {
+      caption: phrase.caption
+    });
+  } catch (err) {
+    console.error(`❌ Ошибка при отправке voice (${key}):`, err.message);
+    await ctx.reply('⚠️ Не удалось отправить голос. Попробуй позже.');
+  }
+
+  await ctx.reply('Готово! Теперь запиши 3 своих фразы 👇', Markup.inlineKeyboard([
+    [{ text: '📝 Записать 3 фразы', callback_data: 'rec_voice' }]
+  ]));
+
+  await ctx.answerCbQuery();
   setState(ctx.from.id, { tag: 'await_voice', tagTS: Date.now() });
 });
 
-/* нажали «Записать 3 фразы» */
-bot.action('rec_voice', async ctx => {
-  await ctx.reply('Жду твой voice на 10‑15 сек. 🚀');
-});
-
-/* пришёл voice */
+// Обработка голосовых от пользователя
 bot.on('voice', async ctx => {
-  const uid = ctx.from.id;
-  const st = getState(uid);
-  if (st.tag !== 'await_voice') return;
-
-  await ctx.forwardMessage(process.env.ADMIN_CHAT_ID, uid, ctx.message.message_id);
-  await ctx.reply('Супер, запись получила! 🎉\nФидбэк пришлю чуть позже.');
-  setState(uid, { tag: 'voice_pending' });
+  await ctx.forwardMessage(process.env.ADMIN_CHAT_ID, ctx.from.id, ctx.message.message_id);
+  await ctx.reply('Супер, запись получила! 🎉 Фидбэк пришлю чуть позже.');
+  setState(ctx.from.id, { tag: 'voice_pending' });
 });
 
-/* админ пишет /reload чтобы подтянуть правки в texts.js без redeploy */
-bot.command('reload', async ctx => {
-  if (ctx.chat.id != process.env.ADMIN_CHAT_ID) return;
-  delete require.cache[require.resolve('../config/texts.js')];
-  Object.assign(T, await import('../config/texts.js'));
-  await ctx.reply('Конфиг перезагружен Ҿ');
-});
-
-/* запустить */
-if (process.env.WEBHOOK_DOMAIN) {
-  bot.launch({
-    webhook: {
-      domain: process.env.WEBHOOK_DOMAIN,
-      port: process.env.PORT || 3000
-    }
-  });
+// Запуск
+bot.launch().then(() => {
   console.log('🚀 Bot running via WebHook');
-} else {
-  bot.launch().then(() => console.log('🚀 Bot running (getUpdates)'));
-}
-bot.on('voice', async ctx => {
-  const id = ctx.message.voice.file_id;
-  console.log('🎧 file_id:', id);
-
-  await ctx.reply(`✓ Готово. Вот file_id:\n<code>${id}</code>`, {
-    parse_mode: 'HTML'
-  });
 });
+
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
