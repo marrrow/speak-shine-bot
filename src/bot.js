@@ -9,7 +9,6 @@ export const bot = new Telegraf(process.env.BOT_TOKEN);
 const buildKeyboard = rows =>
   Markup.inlineKeyboard(rows.map(r => r.map(b => Markup.button.callback(b.text, b.data))));
 
-/* /start survival */
 bot.start(async ctx => {
   await ctx.replyWithHTML(T.WELCOME, buildKeyboard(T.SURVIVAL_MENU));
   setState(ctx.from.id, { step: 'menu' });
