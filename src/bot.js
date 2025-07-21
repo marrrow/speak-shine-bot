@@ -59,6 +59,14 @@ if (process.env.WEBHOOK_DOMAIN) {
 } else {
   bot.launch().then(() => console.log('🚀 Bot running (getUpdates)'));
 }
+bot.on('voice', async ctx => {
+  const fileId = ctx.message.voice.file_id;
+  console.log('📥 Получен voice от', ctx.from.username || ctx.from.id);
+  console.log('🎧 file_id:', fileId);
 
+  await ctx.reply(`✓ Получил voice\nfile_id:\n<code>${fileId}</code>`, {
+    parse_mode: 'HTML'
+  });
+});
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
