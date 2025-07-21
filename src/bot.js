@@ -12,7 +12,7 @@ const buildKeyboard = rows =>
 /* /start survival */
 bot.start(async ctx => {
   if (!ctx.startPayload || ctx.startPayload !== 'survival') return;
-  await ctx.replyWithMarkdownV2(T.WELCOME, buildKeyboard(T.SURVIVAL_MENU));
+  await ctx.replyWithHTML(T.WELCOME, buildKeyboard(T.SURVIVAL_MENU));
   setState(ctx.from.id, { step: 'menu' });
 });
 
