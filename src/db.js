@@ -1,4 +1,5 @@
-import { JSONFileSync, LowSync } from 'lowdb';
+import { LowSync } from 'lowdb';
+import { JSONFileSync } from 'lowdb/node';
 
 const adapter = new JSONFileSync('./db.json');
 export const db = new LowSync(adapter);
