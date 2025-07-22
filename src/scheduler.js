@@ -1,4 +1,5 @@
 import schedule from 'node-schedule';
+import { Markup } from 'telegraf';
 import { bot } from './bot.js'; // Теперь импорт будет работать
 import { db, setState } from './db.js'; // Импортируем db и setState напрямую
 
