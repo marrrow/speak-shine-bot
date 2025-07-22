@@ -154,11 +154,7 @@ async function finishQuiz(ctx, answers) {
 }
 
 // Обработка нажатия "book_zoom"
-bot.action('book_zoom', async ctx => {
-  await ctx.replyWithHTML(`Записывайся сюда: <a href="${CALENDLY_URL}">${CALENDLY_URL}</a>`);
-  setState(ctx.from.id, { tag: 'call_pending' });
-  await ctx.answerCbQuery();
-});
+
 
 // Регистрируем задачи напоминания
 import './scheduler.js';
