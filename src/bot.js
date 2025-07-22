@@ -142,7 +142,7 @@ async function finishQuiz(ctx, answers) {
     setState(uid, { tag: 'lead_tier23' });
     const text = TIER23_PITCH.replace('{urgency}', urgency).replace('{time}', time);
     await ctx.replyWithHTML(text, Markup.inlineKeyboard([
-      [Markup.button.callback('🔸 Забронировать Zoom', 'book_zoom')]
+      [ Markup.button.url('🔸 Забронировать Zoom', CALENDLY_URL) ]
     ]));
   } else {
     setState(uid, { tag: 'lead_tier1' });
