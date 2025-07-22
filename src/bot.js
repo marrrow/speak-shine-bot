@@ -28,10 +28,10 @@ const __dirname  = path.dirname(__filename);
 const voicesDir  = path.resolve(__dirname, '..', 'voices');
 
 const VOICE_FILES = {
-  doc:    'Доктор.ogg',
-  shop:   'Магазин.ogg',
-  school: 'Школа.ogg',
-  bank:   'Банк.ogg',
+  doc:    'доктор.ogg',
+  shop:   'магазин.ogg',
+  school: 'школа.ogg',
+  bank:   'банк.ogg',
   small:  '7фраз.ogg',
 };
 
