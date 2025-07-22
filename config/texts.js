@@ -198,5 +198,9 @@ export const TIER23_PITCH = `Твой 🔥 = {urgency}/10 — люблю та
 
 export const TIER1_PITCH = `Вижу, времени маловато — значит, нужен умный *«10 мин в день»‑план!* 🚶‍♀️✨  
 Скачай пробную *Week‑Map* и посмотри первый урок.`;
+export const TIER1_PITCH = `Вижу, времени маловато — значит, нужен умный «10 мин в день»-план! 🚶‍♀️✨  
+Скачай пробную Week-Map и посмотри первый урок.`;
 
+// 👇 ДОБАВЬТЕ ЭТИ СТРОКИ
+export const CALENDLY_URL = 'https://calendly.com/finnomaryia/english-with-ease-confidence-first-step';
 /* …другие шаблоны сообщений … */
