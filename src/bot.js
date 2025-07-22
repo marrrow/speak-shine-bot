@@ -1,4 +1,6 @@
 // src/bot.js
+// Основная логика бота, экспортируется для webhook.js и scheduler.js
+
 import { Telegraf, Markup } from 'telegraf';
 import fs from 'fs';
 import path from 'path';
@@ -17,15 +19,15 @@ import {
   TIER1_PAYMENT_URL,
 } from '../config/texts.js';
 
-// Экспортируем bot, чтобы webhook.js и scheduler.js могли его использовать
+// Создаём экземпляр бота
 export const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// --- Пути к локальным файлам голоса ---
+// Папка с голосовыми файлами
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 const voicesDir  = path.resolve(__dirname, '..', 'voices');
 
-const VOICE_PATHS = {
+const VOICE_FILES = {
   doc:    'Доктор.ogg',
   shop:   'Магазин.ogg',
   school: 'Школа.ogg',
@@ -33,33 +35,30 @@ const VOICE_PATHS = {
   small:  '7фраз.ogg',
 };
 
-// --- /start survival ---
+// Логирование всех апдейтов для отладки
+bot.on('update', ctx => console.log('📬 got update:', JSON.stringify(ctx.update)));
+
+// /start — сразу показываем меню выбора пакета
 bot.start(async ctx => {
-  if (ctx.startPayload !== 'survival') return;
   await ctx.reply(WELCOME, {
     parse_mode: 'Markdown',
     ...Markup.inlineKeyboard(SURVIVAL_MENU),
   });
 });
 
-// --- 1. Выбор Survival Pack ---
+// 1) Выбор Survival Pack
 bot.action(/^(doc|shop|school|bank|small)$/, async ctx => {
   const key = ctx.match[1];
   const { caption } = PHRASES[key];
-  const voiceFile = path.join(voicesDir, VOICE_PATHS[key]);
-
-  console.log(`Trying to send voice: ${voiceFile}`);
+  const voicePath = path.join(voicesDir, VOICE_FILES[key]);
+  console.log(`Trying to send voice: ${voicePath}`);
   try {
-    if (!fs.existsSync(voiceFile)) {
-      throw new Error(`File not found: ${voiceFile}`);
-    }
-    // Сначала аудио + подпись, затем сообщение AFTER_FILE
+    if (!fs.existsSync(voicePath)) throw new Error(`File not found: ${voicePath}`);
     await ctx.replyWithVoice(
-      { source: fs.createReadStream(voiceFile) },
+      { source: fs.createReadStream(voicePath) },
       { caption, parse_mode: 'Markdown' }
     );
     await ctx.reply(AFTER_FILE, { parse_mode: 'Markdown' });
-
     setState(ctx.from.id, { tag: 'await_voice', tagTS: Date.now() });
   } catch (err) {
     console.error(`❌ Ошибка отправки voice (${key}):`, err.message);
@@ -69,67 +68,58 @@ bot.action(/^(doc|shop|school|bank|small)$/, async ctx => {
   }
 });
 
-// --- 2. Обработка голосового сообщения от пользователя ---
+// 2) Получили голосовое сообщение от пользователя
 bot.on('voice', async ctx => {
   const uid = ctx.from.id;
   const st  = getState(uid);
   if (st.tag !== 'await_voice') return;
-
-  // Пересылаем голос владельцу
+  // Форвардим хозяину
   await ctx.forwardMessage(process.env.ADMIN_CHAT_ID);
   setState(uid, { tag: 'voice_pending' });
-
-  // Приглашаем на опрос
+  // Предлагаем начать квиз
   await ctx.reply(
     'Супер, запись получила! 🎉\nФидбэк пришлю чуть позже, а пока — давай настроим твой персональный план.\nВсего 4 кнопки, это меньше минуты. 🚀',
-    Markup.inlineKeyboard([
-      [{ text: '🚀 Старт опроса', callback_data: 'start_quiz' }],
-    ])
+    Markup.inlineKeyboard([[{ text: '🚀 Старт опроса', callback_data: 'start_quiz' }]])
   );
 });
 
-// --- 3. Начало квиза ---
+// 3) Старт квиза
 bot.action('start_quiz', async ctx => {
   setState(ctx.from.id, { quiz_answers: {} });
   await ctx.editMessageText(QUIZ.q1.text, Markup.inlineKeyboard(QUIZ.q1.buttons));
   await ctx.answerCbQuery();
 });
 
-// --- 4. Обработка ответов квиза ---
-bot.action(/^quiz_q(\d):(.+)$/, async ctx => {
+// 4) Ответы квиза
+bot.action(/^quiz_q(\d):(.*)$/, async ctx => {
   const uid         = ctx.from.id;
-  const questionNum = +ctx.match[1];
+  const qNum        = +ctx.match[1];
   const answer      = ctx.match[2];
-
-  const st              = getState(uid);
-  const updatedAnswers  = { ...st.quiz_answers, [`q${questionNum}`]: answer };
-  setState(uid, { quiz_answers: updatedAnswers });
-
-  const nextNum = questionNum + 1;
-  const nextQ   = QUIZ[`q${nextNum}`];
+  const st          = getState(uid);
+  const updated     = { ...st.quiz_answers, [`q${qNum}`]: answer };
+  setState(uid, { quiz_answers: updated });
+  const nextQNum = qNum + 1;
+  const nextQ    = QUIZ[`q${nextQNum}`];
   if (nextQ) {
     await ctx.editMessageText(nextQ.text, Markup.inlineKeyboard(nextQ.buttons));
   } else {
     await ctx.editMessageText('✅ Готово! Считаю твой идеальный план...');
-    await finishQuiz(ctx, updatedAnswers);
+    await finishQuiz(ctx, updated);
   }
   await ctx.answerCbQuery();
 });
 
-// --- 5. Завершение квиза и ветвление логики ---
+// 5) Завершение квиза и ветвление
 async function finishQuiz(ctx, answers) {
   const uid     = ctx.from.id;
   const urgency = +answers.q3;
   const time    = answers.q4;
-
   if (urgency >= 7 && (time === '15' || time === '30+')) {
     setState(uid, { tag: 'lead_tier23' });
-    const pitch = TIER23_PITCH.replace('{urgency}', urgency).replace('{time}', time);
-    await ctx.reply(pitch, {
+    const text = TIER23_PITCH.replace('{urgency}', urgency).replace('{time}', time);
+    await ctx.reply(text, {
       parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.url('🔸 Бронирую 10-мин Zoom', CALENDLY_URL)]
-      ])
+      ...Markup.inlineKeyboard([[Markup.button.url('🔸 Бронирую Zoom', CALENDLY_URL)]])
     });
   } else {
     setState(uid, { tag: 'lead_tier1' });
@@ -143,11 +133,5 @@ async function finishQuiz(ctx, answers) {
   }
 }
 
-// Экспортируем функцию запуска, чтобы webhook.js мог её использовать, или polling-режим
-export function launchBot() {
-  return bot.launch();
-}
-
-// Если вы тестируете локально без webhook.js, можно раскомментировать:
-// launchBot();
-
+// Регистрируем задачи напоминания
+import './scheduler.js';
