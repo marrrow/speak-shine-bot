@@ -168,41 +168,49 @@ export const AFTER_FILE = `
 Попробуй записать <b>3 фразы</b> голосом (10–15 с) и отправь мне. Я дам обратную связь! 💛
 `.trim();
 
-// Вопросник (квиз)
+
 export const QUIZ = {
   q1: {
     text: '<b>1/4.</b> Зачем тебе английский?',
     buttons: [
-      { text: '🏡 Жизнь',        callback_data: 'quiz_q1:life' },
-      { text: '💼 Работа',       callback_data: 'quiz_q1:work' },
-      { text: '🧑‍🎓 Учёба',      callback_data: 'quiz_q1:school' },
-      { text: '😌 Уверенность',   callback_data: 'quiz_q1:confidence' }
-    ]
+      [
+        { text: '🏡 Жизнь',      callback_data: 'quiz_q1:life' },
+        { text: '💼 Работа',     callback_data: 'quiz_q1:work' }
+      ],
+      [
+        { text: '🧑‍🎓 Учёба',    callback_data: 'quiz_q1:school' },
+        { text: '😌 Уверенность', callback_data: 'quiz_q1:confidence' }
+      ],
+    ],
   },
   q2: {
     text: '<b>2/4.</b> Что тебя тормозит?',
     buttons: [
-      { text: '🙈 Слова',     callback_data: 'quiz_q2:words' },
-      { text: '😳 Страх',      callback_data: 'quiz_q2:fear' },
-      { text: '🙊 Молчу',      callback_data: 'quiz_q2:silence' },
-      { text: '📚 Грамматика', callback_data: 'quiz_q2:grammar' }
-    ]
+      [
+        { text: '🙈 Слова',    callback_data: 'quiz_q2:words' },
+        { text: '😳 Страх',     callback_data: 'quiz_q2:fear' },
+      ],
+      [
+        { text: '🙊 Молчу',    callback_data: 'quiz_q2:silence' },
+        { text: '📚 Грамматика', callback_data: 'quiz_q2:grammar' },
+      ],
+    ],
   },
   q3: {
     text: '<b>3/4.</b> Срочность (1–10)',
-    buttons: Array.from({ length: 10 }, (_, i) => ({
-      text: String(i + 1),
-      callback_data: `quiz_q3:${i + 1}`
-    }))
+    buttons: [
+      [1,2,3,4,5].map(n => ({ text: String(n), callback_data: `quiz_q3:${n}` })),
+      [6,7,8,9,10].map(n => ({ text: String(n), callback_data: `quiz_q3:${n}` })),
+    ],
   },
   q4: {
     text: '<b>4/4.</b> Сколько минут в день?',
     buttons: [
-      { text: '5 мин',  callback_data: 'quiz_q4:5' },
-      { text: '15 мин', callback_data: 'quiz_q4:15' },
-      { text: '30+ мин',callback_data: 'quiz_q4:30' }
-    ]
-  }
+      [ { text: '5 мин',   callback_data: 'quiz_q4:5'  } ],
+      [ { text: '15 мин',  callback_data: 'quiz_q4:15' } ],
+      [ { text: '30+ мин', callback_data: 'quiz_q4:30' } ],
+    ],
+  },
 };
 
 // Пичи после квиза
