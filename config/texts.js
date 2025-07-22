@@ -6,7 +6,7 @@ export const SURVIVAL_MENU = [
 ];
 
 /* file_id аудио, полученные заранее командой /sendvoice */
-...export const PHRASES = {
+export const PHRASES = {
   small: {
     caption: `🤝 7 фраз для знакомства и лёгкой беседы 🌷🌷🌷
 
