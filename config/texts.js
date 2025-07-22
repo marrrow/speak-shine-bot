@@ -198,9 +198,38 @@ export const TIER23_PITCH = `Твой 🔥 = {urgency}/10 — люблю та
 
 export const TIER1_PITCH = `Вижу, времени маловато — значит, нужен умный *«10 мин в день»‑план!* 🚶‍♀️✨  
 Скачай пробную *Week‑Map* и посмотри первый урок.`;
-export const TIER1_PITCH = `Вижу, времени маловато — значит, нужен умный «10 мин в день»-план! 🚶‍♀️✨  
-Скачай пробную Week-Map и посмотри первый урок.`;
 
 // 👇 ДОБАВЬТЕ ЭТИ СТРОКИ
 export const CALENDLY_URL = 'https://calendly.com/finnomaryia/english-with-ease-confidence-first-step';
 /* …другие шаблоны сообщений … */
+export const QUIZ = {
+  q1: {
+    text: '1/4. Зачем тебе английский?',
+    buttons: [
+      [{ text: '🏡 Жизнь', callback_data: 'quiz_q1:life' }, { text: '💼 Работа', callback_data: 'quiz_q1:work' }],
+      [{ text: '🏫 Школа/дети', callback_data: 'quiz_q1:kids' }, { text: '😌 Уверенность', callback_data: 'quiz_q1:confidence' }],
+    ],
+  },
+  q2: {
+    text: '2/4. Что тормозит больше всего?',
+    buttons: [
+        [{ text: '🙈 Слова «вылетают»', callback_data: 'quiz_q2:words' }, { text: '😳 Страх ошибок', callback_data: 'quiz_q2:errors' }],
+        [{ text: '🙊 Молчу', callback_data: 'quiz_q2:silent' }, { text: '📚 Грамматика', callback_data: 'quiz_q2:grammar' }],
+    ],
+  },
+  q3: {
+    text: '3/4. Насколько срочно? (1 — не горит, 10 — горит 🔥)',
+    buttons: [
+        [{ text: '1', callback_data: 'quiz_q3:1' }, { text: '2', callback_data: 'quiz_q3:2' }, { text: '3', callback_data: 'quiz_q3:3' }, { text: '4', callback_data: 'quiz_q3:4' }, { text: '5', callback_data: 'quiz_q3:5' }],
+        [{ text: '6', callback_data: 'quiz_q3:6' }, { text: '7', callback_data: 'quiz_q3:7' }, { text: '8', callback_data: 'quiz_q3:8' }, { text: '9', callback_data: 'quiz_q3:9' }, { text: '10', callback_data: 'quiz_q3:10' }],
+    ],
+  },
+  q4: {
+    text: '4/4. Сколько времени в день готова выделять?',
+    buttons: [
+        [{ text: '5 мин', callback_data: 'quiz_q4:5' }],
+        [{ text: '15 мин', callback_data: 'quiz_q4:15' }],
+        [{ text: '30 мин+', callback_data: 'quiz_q4:30+' }],
+    ],
+  },
+};
